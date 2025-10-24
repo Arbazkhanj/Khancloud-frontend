@@ -11,10 +11,20 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5001/api/auth/login", {
-        email,
-        password,
-      });
+   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
+});
+
+const data = await res.json();
+
+if (res.ok && data.token) {
+  localStorage.setItem("token", data.token);
+  navigate("/dashboard");
+} else {
+  setError(data.message || "Invalid credentials");
+}
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
